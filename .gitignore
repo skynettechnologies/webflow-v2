@@ -3,3 +3,5 @@ data
 .env
 *.log
 .idea/
+# Local Netlify folder
+.netlify
