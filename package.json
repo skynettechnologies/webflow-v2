@@ -10,7 +10,9 @@
   "type": "module",
   "license": "MIT",
   "scripts": {
-    "dev": "nodemon -r dotenv/config app/server.js"
+    "build": "cp -r src/ netlify/functions/",
+    "start": "netlify dev",
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
     "@fastify/static": "^6.5.0",
