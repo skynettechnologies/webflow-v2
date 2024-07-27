@@ -1,0 +1,75 @@
+Function main()
+    # User registration and plan purchase
+    IF user_purchases_plan THEN
+        send_embed_code(domain)
+        PRINT "Embed this code into your website: <embed_code>"
+    END IF
+   capture_url_from_widget()
+   limit=1000   # Number of URL Go to scan
+   urls = Timer(900, get_pending_urls(limit)).start()  # Timer stand for Cron Job, Run every 15 minutes
+   FOR EACH url IN urls DO
+       images=get_image_data(url)
+       pdf=get_pdf_data(url)
+       report= generate_report(url)
+   END FOR
+END FUNCTION
+
+#Scan all the element reports
+
+FUNCTION generate_report(url)
+    # Run every 20 minutes by calling pa11y(Accessibility Scanning library)
+    violations =  Timer(1200, check_violations(url)).start()
+    # Run every 25 minutes by calling AXE(Accessibility Scanning library)
+    success_data = Timer(1500, check_success_data(url)).start()
+    # Generate Accessibility Score and show remediated volation
+    When generate_report(url, violations, success_data) Then
+         Accessibility_score=violation/(success_data+violations)
+         FOR EACH violation IN violations DO
+            IF Violation_remediated_by_widget
+                Violation_remediated=violation
+            ELSE
+                not_remediated=violation
+            END IF
+         END FOR
+    END LOOP
+   RETURN remove_success_data(url)
+END FUNCTION
+
+# Check for Image scanning features
+FUNCTION get_image_data(url)
+    getallImage=scanImage(url)
+    FOR EACH image IN getallImage DO
+            #Image already store in Database
+            IF image_exist THEN
+              RETURN  CONTINUE # Skip these URL
+            ELSE IF image_has_alt_text THEN
+             RETURN store_alt_text_in_database(image) # if alt text already exist
+            ELSE IF image_dont_have_alt_tag
+              RETURN maintain_decorative_image(image) # if alt tag already exist
+            ELSE
+                add_missing_alt_text_flag(image)
+                # should be more that 50 pixels and Image size should be less than 4mb
+                IF image.size is Smaller Than 4Mb and image.width is Greater Than 50 then
+                  RETURN Timer(1800, run_ai_alt_text_cron).start()  # Run every 30 minutes
+                ELSE
+                  RETURN maintain_decorative_image(image) # Add then to decorative
+                END IF
+            END IF
+        END FOR
+END FUNCTION
+
+#Check for PDF
+FUNCTION scan_pdfs(url)
+    getallPDF=scanPDF(url)
+    FOR EACH pdf IN getallPDF DO
+        # Run them every 10min with ghostscript(PDF Reader Library)
+        total_pages = get_pdf_page_count(pdf)
+        IF NUMERIC(total_pages)
+            show_price_base_page(total_pages)
+        else
+           RETURN show_price_fix_page()
+    END FOR
+END FUNCTION
+
+call main()
+
